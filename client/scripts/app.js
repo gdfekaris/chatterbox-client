@@ -8,7 +8,6 @@ $(document).ready(function () {
     dataType: 'json',
     success: function (data) {
       console.log(data);
-
       let rooms = {};
 
       for (var i = data.results.length - 1; i >= 0; i--) {
@@ -16,20 +15,16 @@ $(document).ready(function () {
           `<span class="username">${data.results[i].username}:</span>
             <span class="messageText">${data.results[i].text}</span>`
         );
-
         if (!rooms[data.results[i].roomname]) {
           rooms[data.results[i].roomname] = data.results[i].roomname;
         }
-
         $('#chats').append($message);
       }
 
-
       for (var key in rooms) {
-        var $option = $(`<option>${rooms[key]}</option>`)
+        var $option = $(`<option>${rooms[key]}</option>`);
         $('#dropDown').append($option);
       }
-
 
       $('.username').on('click', function () {
         console.log(`added friend!`);
@@ -38,10 +33,44 @@ $(document).ready(function () {
   });
 });
 
-$(document).on('change', '#dropDown', function() {
+$(document).on('change', '#dropDown', function () {
   var $selected = $(`#dropDown option:selected`);
-  var $selectedText= $selected.text()
-  console.log($selectedText);
+  var $selectedText = $selected.text();
+  // console.log($selectedText);
+});
+
+/* post to chat button/functionality */
+$(document).on('click', '.postButton', function () {
+  let $text = $('#textField').val();
+  let userName = window.location.search.slice(10);
+  let roomName = $(`#dropDown option:selected`).text();
+
+  var message = {
+    username: userName,
+    text: $text,
+    roomname: roomName
+  };
+
+  $.ajax({
+    type: "POST",
+    url: 'http://parse.rpt.hackreactor.com/chatterbox/classes/messages',
+    data: JSON.stringify(message),
+    contentType: 'application/json',
+    success: function (data) {
+      data['username'] = message.username;
+      data['roomname'] = message.roomname;
+      data['text'] = message.text;
+      console.log('chatterbox: Message sent');
+      //console.log('success function input data:', data);
+      console.log('results:', results);
+    },
+    error: function (data) {
+      console.error('chatterbox: Failed to send message', data);
+    }
+  });
+
+  // console.log(message)
+  $('#textField').val('');
 });
 
 
