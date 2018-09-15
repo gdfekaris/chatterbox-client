@@ -48,14 +48,14 @@ body {
 }
 
 form {
-  padding: 20px;
+  padding: none;
   padding-left: 0;
-  margin-bottom: 20px;
+  margin-bottom: none;
 }
 
 form input[type='text'] {
-  margin-right: 10px;
-  width: 70%;
+  margin-right: 5px;
+  width: 80%;
   font-size: 12px;
   padding: 5px;
 }
@@ -87,4 +87,10 @@ form input[type='text'] {
 .friend {
   color: #fff;
   background-color: #0090da;
+}
+
+.roomName {
+  border: none;
+  display: inline-block;
+
 }

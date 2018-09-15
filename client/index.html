@@ -28,15 +28,27 @@
   <div id="main">
     <h1>chatterbox</h1>
     <!-- Your HTML goes here! -->
-    <div class="dropDown">
+    <div class="room">
       <h4 class="roomName">Room:</h4>
-      <button class="roomSelect">room</button>
-      <ul>
-        <li>Lobby</li>
-        <li>Test</li>
-      </ul>
+      <select id="dropDown">
+        <option>Select Room</option>
+        <option>Lobby</option>
+        <option>test</option>
+      </select>
     </div>
-    <button class="button"> submit</button>
+    <fieldset>
+      <legend>Grace the room with your thoughts:</legend>
+      <form>
+        <span class="inputForm">
+          <label for="inputBox"></label>
+          <input id="textField" type="text" placeholder="~ good vibes ~">
+        </span>
+        <span class="inputForm">
+          <input type="button" class="postButton" value="post2chat">
+        </span>
+      </form>
+    </fieldset>
+    <!-- <button class="button"> submit</button> -->
   </div>
 
   <div id="chats"></div>
