@@ -31,9 +31,13 @@
     <div class="room">
       <h4 class="roomName">Select Room:</h4>
       <select id="dropDown">
-        <option>lobby</option>
-        <option>test</option>
+        <option>All Rooms</option>
+        <option id="createNewRoom">Create New Room</option>
       </select>
+      <span class="createRoomField">
+        <input class='newRoom' type="text" placeholder="enter room name">
+        <button class="createRoomButton">create room</button>
+      </span>
     </div>
     <fieldset>
       <legend>Grace the room with your thoughts:</legend>
