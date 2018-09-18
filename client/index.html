@@ -29,8 +29,8 @@
     <h1>chatterbox</h1>
     <!-- Your HTML goes here! -->
     <div class="room">
-      <h4 class="roomName">Select Room:</h4>
-      <select id="dropDown">
+      <h4 class="roomName">Room:</h4>
+      <select id="roomSelect">
         <option>All Rooms</option>
         <option id="createNewRoom">Create New Room</option>
       </select>
@@ -51,7 +51,10 @@
         </span>
       </form>
     </fieldset>
-    <!-- <button class="button"> submit</button> -->
+    <div>
+      <button class="refreshButton">Refresh!</button>
+    </div>
+
   </div>
 
   <div id="chats"></div>
