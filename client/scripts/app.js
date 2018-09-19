@@ -41,6 +41,8 @@ App.prototype.init = function() {
       }
     }
   });
+
+  $('#send').on('submit', app.handleSubmit);
 };
 
 App.prototype.send = function(message) {
@@ -102,6 +104,14 @@ App.prototype.clearMessages = function() {
 };
 
 App.prototype.renderMessage = function() {
+  console.log('render message check');
+  const loadingGif = $('<div class="loading">')
+    .html(
+      '<img src="images/loading.gif" alt="a cute kitty loading gif" width="150" height="150">'
+    )
+    .css('text-align', 'center');
+
+  $('#main').append(loadingGif);
   let $text = $('#textField').val();
   let userName = usernameFormatter(window.location.search);
   let roomName = $(`#roomSelect option:selected`).text();
@@ -110,27 +120,39 @@ App.prototype.renderMessage = function() {
     .html(`<span class="username">${userName}:</span>
       <span class="messageText">${$text}</span>`);
 
-  $('#chats').prepend($message);
+  setTimeout(function() {
+    $('#chats').prepend($message);
+  }, 1000);
 
   var message = {
     username: userName,
     text: $text,
     roomname: roomName
   };
+  setTimeout(function() {
+    $('.loading').detach();
+  }, 1000);
 
   this.send(message);
 };
 
 App.prototype.renderRoom = function(newRoomText) {
   const newRoom = `<option>${newRoomText}</option>`;
-  $('#roomSelect').prepend(newRoom);
+  $('#roomSelect').append(newRoom);
 };
 
-App.prototype.handleSubmit = function() {
+App.prototype.handleSubmit = function(event) {
+  event.preventDefault();
   app.renderMessage();
+  $('#textField').val('');
 };
 
-App.prototype.handleUsernameClick = function() {};
+App.prototype.handleUsernameClick = function(e) {
+  let position = e.indexOf(' ', 5);
+  let friend = e.slice(position + 1);
+  console.log(friend);
+  return friend;
+};
 
 $(document).ready(function() {
   app.init();
@@ -209,42 +231,22 @@ function charEscaper(string) {
     let position = result.indexOf(`'`);
     result = result.substr(0, position) + '\\' + result.substr(position);
   }
+  if (result.includes(`+`)) {
+    let position = result.indexOf(`+`);
+    result = result.substr(0, position) + '\\' + result.substr(position);
+  }
   if (result.startsWith(`.`)) {
     result = '\\' + result;
   }
   return result;
 }
 
-/* Post to chat functionality */
-$(document).on('click', '.postButton', function() {
-  app.handleSubmit();
-  $('#textField').val('');
-});
-
-/*
-  var $selected = $(`#roomSelect option:selected`);
-  var $selectedText = $selected.text();
-  const newRoomClass = classFormatter($selectedText);
-  const roomClassFinal = charEscaper(newRoomClass);
-  if ($selectedText === 'Create New Room') {
-    $('.createRoomField').css('visibility', 'visible');
-    $('.createRoomButton').css('visibility', 'visible');
-  } else if ($selectedText === 'All Rooms') {
-    $('.chat').show();
-    var toDo = 'do something';
-  } else {
-    $('.chat').hide();
-    $(`.${roomClassFinal}`).show();
-  }
-
-*/
-
 /* "Adding friend" functionality */
 $(document).on('click', '.chat', function() {
-  const friend = event.target.className.slice(9);
+  let friendClass = app.handleUsernameClick($(this).attr('class'));
+  let friendName = charEscaper(friendClass);
   $('.chat').hide();
-  $(`.${friend}`).show();
-  app.handleUsernameClick();
+  $(`.${friendName}`).show();
 });
 
 $(document).on('click', '.refreshButton', function() {

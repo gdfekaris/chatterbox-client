@@ -1,5 +1,5 @@
 body {
-  background: #eee;
+  background-image: url("http://thepainterflynn.com/wp-content/uploads/2018/05/luxurious-blue-and-white-striped-background-y3957418-luxury-baby-blue-and-white-striped-wallpaper-light-blue-striped-background-ii-1-2-google-paper.jpg");
   text-align: center;
   padding: 0 25px;
   font-family: arial, sans-serif;
@@ -68,7 +68,9 @@ form input[type='text'] {
 .chat {
   padding: 5px;
   margin-bottom: 5px;
-  background-color: #eee;
+  background-color: #c0ebf9;
+  border: solid;
+  border-width: 1px;
 }
 
 .chat .username {
@@ -76,7 +78,7 @@ form input[type='text'] {
 }
 
 .chat:hover {
-  background-color: #ddd;
+  background-color: #acd3e0;
 }
 
 .spinner {
