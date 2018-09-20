@@ -63,7 +63,7 @@ App.prototype.send = function(message) {
 };
 
 App.prototype.renderMessage = function() {
-  console.log('render message check');
+  //console.log('render message check');
   const loadingGif = $('<div class="loading">')
     .html(
       '<img src="images/loading.gif" alt="a cute kitty loading gif" width="150" height="150">'
@@ -98,6 +98,12 @@ App.prototype.renderMessage = function() {
   }, 1000);
 
   this.send(message);
+
+  //spam feature
+  // for (var i = 0; i < 4; i++) {
+  //   this.send(message);
+  // }
+
 };
 
 App.prototype.renderRoom = function(newRoomText) {
