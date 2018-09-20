@@ -1,3 +1,5 @@
+/* APP OBJECT & PROTOTYPE CHAIN */
+
 const App = function() {
   this.server =
     'http://parse.rpt.hackreactor.com/chatterbox/classes/messages?order=-createdAt&limit=250';
@@ -60,49 +62,6 @@ App.prototype.send = function(message) {
   });
 };
 
-App.prototype.fetch = function() {
-  $.ajax({
-    url: this.server,
-    type: `GET`,
-    error: function() {
-      $('#chats').html('<p>An error has occurred</p>');
-    },
-    dataType: 'json',
-    success: function(data) {
-      console.log(data);
-      let rooms = {};
-      for (var i = 0; i < data.results.length; i++) {
-        if (
-          !xssTest(data.results[i].text) &&
-          !xssTest(data.results[i].roomname) &&
-          !xssTest(data.results[i].username)
-        ) {
-          var $message = $(
-            `<div class="chat ${data.results[i].roomname} ${
-              data.results[i].username
-            }">`
-          ).html(`<span class="username">${data.results[i].username}:</span>
-              <span class="messageText">${data.results[i].text}</span>`);
-          if (!rooms[data.results[i].roomname]) {
-            rooms[data.results[i].roomname] = data.results[i].roomname;
-          }
-
-          $('#chats').append($message);
-        }
-      }
-
-      for (var key in rooms) {
-        var $option = $(`<option>${rooms[key]}</option>`);
-        $('#roomSelect').append($option);
-      }
-    }
-  });
-};
-
-App.prototype.clearMessages = function() {
-  $('#chats').empty();
-};
-
 App.prototype.renderMessage = function() {
   console.log('render message check');
   const loadingGif = $('<div class="loading">')
@@ -123,6 +82,11 @@ App.prototype.renderMessage = function() {
   setTimeout(function() {
     $('#chats').prepend($message);
   }, 1000);
+
+  //In order to pass all SpecRunner tests,
+  //uncomment line 89, and comment out lines 82-84
+
+  //$('#chats').prepend($message);
 
   var message = {
     username: userName,
@@ -154,22 +118,24 @@ App.prototype.handleUsernameClick = function(e) {
   return friend;
 };
 
+App.prototype.clearMessages = function () {
+  $('#chats').empty();
+};
+
+App.prototype.fetch = function () {
+  this.init();
+};
+
+/* INITIALIZE PAGE */
+const app = new App();
 $(document).ready(function() {
   app.init();
 });
 
-let app = new App();
 
-/* XSS attack test --> returns true if the string is evil */
-function xssTest(str) {
-  if (str) {
-    return str.includes('<') || str.startsWith('&') || str.startsWith(' ');
-  } else {
-    return false;
-  }
-}
+/* BUTTONS & EVENT LISTENERS */
 
-/* Drop Down Menu functionality */
+//Room Select functionality
 $(document).on('change', '#roomSelect', function() {
   var $selected = $(`#roomSelect option:selected`);
   var $selectedText = $selected.text();
@@ -187,7 +153,7 @@ $(document).on('change', '#roomSelect', function() {
   }
 });
 
-/* Create new room functionality */
+//Create New Room functionality
 $(document).on('click', '.createRoomButton', function() {
   const newRoomText = $('.newRoom').val();
   app.renderRoom(newRoomText);
@@ -196,31 +162,32 @@ $(document).on('click', '.createRoomButton', function() {
   $('.createRoomButton').css('visibility', 'hidden');
 });
 
-const usernameFormatter = function(string) {
-  let result = string.slice(10);
-  let regex = /%20/gi;
-  if (result.includes('%20')) {
-    return result.replace(regex, ' ');
+//Get Friend's Messages functionality
+$(document).on('click', '.chat', function () {
+  let friendClass = app.handleUsernameClick($(this).attr('class'));
+  let friendName = charEscaper(friendClass);
+  $('.chat').hide();
+  $(`.${friendName}`).show();
+});
+
+//Rrefresh Page functionality
+$(document).on('click', '.refreshButton', function () {
+  location.reload();
+});
+
+/* HELPER FUNCTIONS */
+
+//XSS attack test --> returns true if the string is evil
+const xssTest = function(str) {
+  if (str) {
+    return str.includes('<') || str.startsWith('&') || str.startsWith(' ');
+  } else {
+    return false;
   }
-  return result;
 };
 
-function classFormatter(string) {
-  let result;
-  let regex = / /gi;
-  if (string) {
-    result = string;
-  } else {
-    return;
-  }
-  if (result.includes(' ')) {
-    return result.replace(regex, '_');
-  }
-  return result;
-}
-
-/* escapes certain characters */
-function charEscaper(string) {
+//Escapes certain characters
+const charEscaper = function (string) {
   let result;
   if (string) {
     result = string;
@@ -239,16 +206,42 @@ function charEscaper(string) {
     result = '\\' + result;
   }
   return result;
-}
+};
 
-/* "Adding friend" functionality */
-$(document).on('click', '.chat', function() {
-  let friendClass = app.handleUsernameClick($(this).attr('class'));
-  let friendName = charEscaper(friendClass);
-  $('.chat').hide();
-  $(`.${friendName}`).show();
-});
+//Formats username for display
+const usernameFormatter = function(string) {
+  let result = string.slice(10);
+  let regex = /%20/gi;
+  if (result.includes('%20')) {
+    return result.replace(regex, ' ');
+  }
+  return result;
+};
 
-$(document).on('click', '.refreshButton', function() {
-  location.reload();
-});
+//Formats classes for CSS & HTML
+const classFormatter = function(string) {
+  let result;
+  let regex = / /gi;
+  if (string) {
+    result = string;
+  } else {
+    return;
+  }
+  if (result.includes(' ')) {
+    return result.replace(regex, '_');
+  }
+  return result;
+};
+
+/* DELETE REQUEST */
+// $.ajax({
+  //   type: 'DELETE',
+  //   url: 'http://parse.rpt.hackreactor.com/chatterbox/classes/messages/<putObjectIDHere>',
+  //   contentType: 'application/json',
+  //   success: function (data) {
+  //     console.log('chatterbox: Message Deleted');
+  //   },
+  //   error: function (data) {
+  //     console.error('chatterbox: Failed to delete message', data);
+  //   }
+  // });
